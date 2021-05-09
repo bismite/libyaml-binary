@@ -48,7 +48,7 @@ jobs:
           tar zxf yaml-0.2.5.tar.gz
       - name: make
         working-directory: yaml-0.2.5
-        run: x86_64-w64-mingw32-gcc -Wall -s -Os -DNDEBUG -g0 src/*.c -Iinclude -shared -o libyaml-0-2.dll -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
+        run: x86_64-w64-mingw32-gcc -Wall -s -Os -DNDEBUG -g0 src/*.c -Iinclude -shared -o libyaml.dll -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
       - name: install
         run: |
           mkdir -p libyaml-0.2.5-x86_64-w64-mingw32/lib libyaml-0.2.5-x86_64-w64-mingw32/include

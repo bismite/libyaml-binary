@@ -1,0 +1,38 @@
+name: Build
+on: [push]
+jobs:
+  macOS:
+    runs-on: macos-10.15
+    env:
+      SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: copy libyaml
+        run: |
+          curl -OL https://github.com/yaml/libyaml/releases/download/0.2.5/yaml-0.2.5.tar.gz
+          tar zxf yaml-0.2.5.tar.gz
+      - name: make
+        working-directory: yaml-0.2.5
+        run: |
+          ./configure --enable-static=no CFLAGS="-O3 -g0 -DNDEBUG -arch arm64 -arch x86_64" LDFLAGS="-arch arm64 -arch x86_64"
+          make
+          install_name_tool -id @rpath/libyaml-0.2.dylib src/.libs/libyaml-0.2.dylib
+      - name: install
+        run: |
+          mkdir -p libyaml-0.2.5-macos/lib libyaml-0.2.5-macos/include
+          cp yaml-0.2.5/src/.libs/libyaml-0.2.dylib libyaml-0.2.5-macos/lib/
+          cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-macos/include/
+          cp yaml-0.2.5/License libyaml-0.2.5-macos/
+      - name: link
+        working-directory: libyaml-0.2.5-macos/lib
+        run: ln -sf libyaml-0.2.dylib libyaml.dylib
+      - run: tar czf libyaml-0.2.5-macos.tgz libyaml-0.2.5-macos
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: libyaml-0.2.5-macos.tgz
+          asset_name: libyaml-0.2.5-macos.tgz
+          tag: ${{ github.ref }}
+          overwrite: true

@@ -52,7 +52,7 @@ jobs:
       - name: install
         run: |
           mkdir -p libyaml-0.2.5-x86_64-w64-mingw32/lib libyaml-0.2.5-x86_64-w64-mingw32/include
-          cp yaml-0.2.5/libyaml-0-2.dll libyaml-0.2.5-x86_64-w64-mingw32/lib/
+          cp yaml-0.2.5/libyaml.dll libyaml-0.2.5-x86_64-w64-mingw32/lib/
           cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-x86_64-w64-mingw32/include/
           cp yaml-0.2.5/License libyaml-0.2.5-x86_64-w64-mingw32/
       - run: tar czf libyaml-0.2.5-x86_64-w64-mingw32.tgz libyaml-0.2.5-x86_64-w64-mingw32

@@ -75,12 +75,12 @@ jobs:
       - name: make
         working-directory: yaml-0.2.5
         run: |
-          emconfigure ./configure
-          emmake make
+          emcc -Wall -s -O3 -DNDEBUG -g0 -c src/*.c -Iinclude -fPIC -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
+          emar rcs libyaml.a *.o
       - name: install
         run: |
           mkdir -p libyaml-0.2.5-emscripten/lib libyaml-0.2.5-emscripten/include
-          cp yaml-0.2.5/src/.libs/libyaml.a libyaml-0.2.5-emscripten/lib/
+          cp yaml-0.2.5/libyaml.a libyaml-0.2.5-emscripten/lib/
           cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-emscripten/include/
           cp yaml-0.2.5/License libyaml-0.2.5-emscripten/
       - run: tar czf libyaml-0.2.5-emscripten.tgz libyaml-0.2.5-emscripten

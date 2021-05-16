@@ -64,3 +64,31 @@ jobs:
           asset_name: libyaml-0.2.5-x86_64-w64-mingw32.tgz
           tag: ${{ github.ref }}
           overwrite: true
+  emscripten:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: mymindstorm/setup-emsdk@v9
+      - name: copy libyaml
+        run: |
+          curl -OL https://github.com/yaml/libyaml/releases/download/0.2.5/yaml-0.2.5.tar.gz
+          tar zxf yaml-0.2.5.tar.gz
+      - name: make
+        working-directory: yaml-0.2.5
+        run: |
+          emconfigure ./configure
+          emmake make
+      - name: install
+        run: |
+          mkdir -p libyaml-0.2.5-emscripten/lib libyaml-0.2.5-emscripten/include
+          cp yaml-0.2.5/src/.libs/libyaml.a libyaml-0.2.5-emscripten/lib/
+          cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-emscripten/include/
+          cp yaml-0.2.5/License libyaml-0.2.5-emscripten/
+      - run: tar czf libyaml-0.2.5-emscripten.tgz libyaml-0.2.5-emscripten
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: libyaml-0.2.5-emscripten.tgz
+          asset_name: libyaml-0.2.5-emscripten.tgz
+          tag: ${{ github.ref }}
+          overwrite: true

@@ -16,13 +16,14 @@ jobs:
       - name: make
         working-directory: yaml-0.2.5
         run: |
-          ./configure --enable-static=no CFLAGS="-O3 -g0 -DNDEBUG -arch arm64 -arch x86_64" LDFLAGS="-arch arm64 -arch x86_64"
+          ./configure --enable-static=yes CFLAGS="-O3 -g0 -DNDEBUG -arch arm64 -arch x86_64" LDFLAGS="-arch arm64 -arch x86_64"
           make
           install_name_tool -id @rpath/libyaml-0.2.dylib src/.libs/libyaml-0.2.dylib
       - name: install
         run: |
           mkdir -p libyaml-0.2.5-macos/lib libyaml-0.2.5-macos/include
           cp yaml-0.2.5/src/.libs/libyaml-0.2.dylib libyaml-0.2.5-macos/lib/
+          cp yaml-0.2.5/src/.libs/libyaml.a libyaml-0.2.5-macos/lib/
           cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-macos/include/
           cp yaml-0.2.5/License libyaml-0.2.5-macos/
       - name: link
@@ -48,11 +49,15 @@ jobs:
           tar zxf yaml-0.2.5.tar.gz
       - name: make
         working-directory: yaml-0.2.5
-        run: x86_64-w64-mingw32-gcc -Wall -s -Os -DNDEBUG -g0 src/*.c -Iinclude -shared -o libyaml.dll -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
+        run: |
+          x86_64-w64-mingw32-gcc -Wall -s -Os -DNDEBUG -g0 src/*.c -Iinclude -shared -o libyaml.dll -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
+          x86_64-w64-mingw32-gcc -Wall -s -Os -DNDEBUG -g0 -c src/*.c -Iinclude -fPIC -DYAML_VERSION_STRING='"0.2.5"' -DYAML_VERSION_MAJOR=0 -DYAML_VERSION_MINOR=2 -DYAML_VERSION_PATCH=5
+          ar rcs libyaml.a *.o
       - name: install
         run: |
           mkdir -p libyaml-0.2.5-x86_64-w64-mingw32/lib libyaml-0.2.5-x86_64-w64-mingw32/include
           cp yaml-0.2.5/libyaml.dll libyaml-0.2.5-x86_64-w64-mingw32/lib/
+          cp yaml-0.2.5/libyaml.a libyaml-0.2.5-x86_64-w64-mingw32/lib/
           cp yaml-0.2.5/include/yaml.h libyaml-0.2.5-x86_64-w64-mingw32/include/
           cp yaml-0.2.5/License libyaml-0.2.5-x86_64-w64-mingw32/
       - run: tar czf libyaml-0.2.5-x86_64-w64-mingw32.tgz libyaml-0.2.5-x86_64-w64-mingw32
